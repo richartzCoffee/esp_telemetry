@@ -3,6 +3,13 @@
 .AppleDouble
 .LSOverride
 
+# Vscode
+.vscode/
+
+# Clangd
+.clangd/
+.clangd
+
 # Directory metadata
 .directory
 
