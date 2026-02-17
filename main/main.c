@@ -1,15 +1,25 @@
 
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "esp_event.h"
 
 
 #include "wifi_connection.h"
+#include "mqtt_system.h"
 
 
 static const char *TAG = "app_main";
 
+
+void process_received_data(const char *topic, const char *payload, int topic_len, int payload_len) {
+    // Exemplo de uso seguro sem precisar copiar para uma string nova:
+    ESP_LOGI(TAG, "New message len and topic: %.*s, payload len: %d", topic_len, topic, payload_len);
+
+}
+
 void app_main(void)
 {
+    esp_log_level_set("*", ESP_LOG_DEBUG); 
 
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -28,5 +38,6 @@ void app_main(void)
     
 
     wifi_connection_init_std();
+    mqtt_system_init(process_received_data);
 
 }

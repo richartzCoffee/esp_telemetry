@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "sdkconfig.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -15,6 +17,15 @@
 
 
 #include "nvs_flash.h"
+
+/* Backward compatibility for previous misnamed Kconfig symbols */
+#if !defined(CONFIG_ESP_WIFI_SSID) && defined(CONFIG_CONFIG_ESP_WIFI_SSID)
+#define CONFIG_ESP_WIFI_SSID CONFIG_CONFIG_ESP_WIFI_SSID
+#endif
+
+#if !defined(CONFIG_ESP_WIFI_PASSWORD) && defined(CONFIG_CONFIG_ESP_WIFI_PASSWORD)
+#define CONFIG_ESP_WIFI_PASSWORD CONFIG_CONFIG_ESP_WIFI_PASSWORD
+#endif
 
 /* Configuration macros (from Kconfig) */
 #define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
@@ -59,6 +70,11 @@
 static uint8_t s_retry_num = 0;
 
 static const char *WIFI_CONNECTION = "wifi_connection";
+
+
+#ifndef CONFIG_WIFI_RECONNECT_INTERVAL_SEC
+#define CONFIG_WIFI_RECONNECT_INTERVAL_SEC 60
+#endif
 
 
 /* esp_timer_start_once expects microseconds */
@@ -153,6 +169,7 @@ void wifi_connection_init_std(void)
         .sta = {
             .ssid = EXAMPLE_ESP_WIFI_SSID,
             .password = EXAMPLE_ESP_WIFI_PASS,
+            /* Transition mode for APs without mandatory PMF */
             .threshold.authmode = ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD,
             .sae_pwe_h2e = ESP_WIFI_SAE_MODE,
             .sae_h2e_identifier = EXAMPLE_H2E_IDENTIFIER,

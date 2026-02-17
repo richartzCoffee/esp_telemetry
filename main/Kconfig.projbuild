@@ -1,24 +1,52 @@
 menu "Example Configuration"
 
+    
+    # MQTT Configuration
+    config MQTT_BROKER_HOST
+        string "MQTT broker IP/host"
+        default "mqtt://192.168.0.X"
+        help
+            IP or hostname of the MQTT broker, with or without mqtt:// scheme.
+
+    config MQTT_USERNAME
+        string "MQTT username"
+        default "MQTT_USERNAME"
+        help
+            Username for broker authentication.
+
+    config MQTT_PASSWORD
+        string "MQTT password"
+        default "MQTT_PASSWORD"
+        help
+            Password for broker authentication.
+
+    config MQTT_TOPICS_LIST
+        string "MQTT topics list"
+        default "esp_telemetry/cmd;esp_telemetry/config"
+        help
+            Space-separated list of topics to subscribe after MQTT connection.
+            Example: "esp_telemetry/cmd;esp_telemetry/config"
+    
+    config MQTT_TRY_CONNECT_TIMEOUT_MS
+        int "Broker connection timeout (ms)"
+        range 1 4294967295
+        default 30000
+        help
+            Define o tempo de espera em milissegundos para tentar conectar ao broker MQTT.
+    
+    # Wi-Fi Configuration
+ 
     config ESP_WIFI_SSID
         string "WiFi SSID"
-        default "WifiSSID"
+        default "WiFi_SSID"
         help
             SSID (network name) for the example to connect to.
 
     config ESP_WIFI_PASSWORD
         string "WiFi Password"
-        default "WifiPassword"
+        default "WiFi_PASSWORD"
         help
             WiFi password (WPA or WPA2) for the example to use.
-
-    config WIFI_RECONNECT_INTERVAL_SEC
-        int "Intervalo de reconexao Wi-Fi (segundos)"
-        range 1 4294967295
-        default 60
-        help
-            Define o tempo de espera em segundos antes de tentar reconectar ao Wi-Fi.
-
 
     choice ESP_WIFI_SAE_MODE
         prompt "WPA3 SAE mode selection"
@@ -47,6 +75,13 @@ menu "Example Configuration"
         default 5
         help
             Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+
+    config WIFI_RECONNECT_INTERVAL_SEC
+        int "WiFi reconnect interval (s)"
+        range 1 3600
+        default 60
+        help
+            Interval in seconds before a new reconnect attempt after reaching the immediate retry limit.
 
     choice ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD
         prompt "WiFi Scan auth mode threshold"
